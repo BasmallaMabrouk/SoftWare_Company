@@ -174,10 +174,32 @@ CREATE TABLE UserAccount
         FOREIGN KEY (EmployeeID)
         REFERENCES Employee(EmployeeID)
 );
+
+CREATE TABLE EmploymentHistory
+(
+    HistoryID INT PRIMARY KEY IDENTITY,
+    EmployeeID INT NOT NULL,
+    DepartmentID INT NOT NULL,
+    PositionID INT NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NULL, 
+
+    CONSTRAINT FK_EmpHist_Employee FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
+    CONSTRAINT FK_EmpHist_Department FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID),
+    CONSTRAINT FK_EmpHist_Position FOREIGN KEY (PositionID) REFERENCES Position(PositionID)
+);
+
 ALTER TABLE Department
 ADD CONSTRAINT FK_Department_Manager
 FOREIGN KEY (ManagerID)
 REFERENCES Employee(EmployeeID);
+
+INSERT INTO EmploymentHistory (EmployeeID, DepartmentID, PositionID, StartDate, EndDate)
+VALUES
+(1, 1, 1, '2022-01-01', '2023-01-01'),
+(1, 2, 2, '2023-01-02', NULL),
+(2, 2, 2, '2021-03-10', NULL),
+(3, 3, 3, '2020-06-15', NULL);
 
 INSERT INTO Department (DepartmentName, Location)
 VALUES
