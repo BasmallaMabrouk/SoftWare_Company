@@ -46,16 +46,25 @@ select * from vw_AttendanceSummary
 
 CREATE VIEW vw_PayrollReport AS
 SELECT 
-    e.EmployeeID,
-    e.FirstName,
-    e.LastName,
-    p.BasicSalary,
-    p.Allowances,
-    p.Deductions,
-    (p.BasicSalary + p.Allowances - p.Deductions) AS NetSalary,
-    p.PaymentDate
-FROM Payroll p
-JOIN Employee e ON p.EmployeeID = e.EmployeeID;
+    P.PayrollID,
+    E.FirstName + ' ' + E.LastName AS EmployeeName,
+    P.Month,
+    P.Year,
+    P.BasicSalary,
+    AT.AllowanceName,
+    PA.Amount AS AllowanceAmount,
+    DT.DeductionName,
+    PD.Amount AS DeductionAmount,
+    dbo.FN_TotalAllowances(P.PayrollID) AS TotalAllowances,
+    dbo.FN_TotalDeductions(P.PayrollID) AS TotalDeductions,
+    dbo.FN_NetSalary(P.PayrollID) AS NetSalary
+
+FROM Payroll P
+JOIN Employee E ON P.EmployeeID = E.EmployeeID
+LEFT JOIN PayrollAllowance PA ON P.PayrollID = PA.PayrollID
+LEFT JOIN AllowanceType AT ON PA.AllowanceTypeID = AT.AllowanceTypeID
+LEFT JOIN PayrollDeduction PD ON P.PayrollID = PD.PayrollID
+LEFT JOIN DeductionType DT ON PD.DeductionTypeID = DT.DeductionTypeID
 
 select * from vw_PayrollReport
 
